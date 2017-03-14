@@ -1,11 +1,13 @@
 package me.bbb1991;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.bbb1991.model.Vacancy;
 import me.bbb1991.model.VacancyHolder;
+import me.bbb1991.model2.Aqua;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 
 /**
  * Created by bbb1991 on 1/17/17.
@@ -16,22 +18,26 @@ import java.net.URL;
 
 public class JsonParser {
 
-    private static final String URL_JSON = "http://rabota.ngs.ru/api/v1/vacancies/";
+    private static final String VACANCY_URL = "http://rabota.ngs.ru/api/v1/vacancies/";
+
+    private static final String AQUA_URL = "http://docbooking.ru/rosbank/aquas.json";
 
     public static void main(String[] args) throws Exception {
 
-        VacancyHolder vacancyHolder = parseJson(new URL(URL_JSON));
+        String vacanciesJson = IOUtils.toString(new URL(VACANCY_URL), "utf-8");
 
-        for (Vacancy vacancy : vacancyHolder.getVacancies()) {
-            System.out.println(vacancy);
-        }
+        VacancyHolder vacancyHolder = parseJson(vacanciesJson, VacancyHolder.class);
+
+        vacancyHolder.getVacancies().forEach(System.out::println);
+
+        String aquaJson = IOUtils.toString(new URL(AQUA_URL), "windows-1251");
+
+        Aqua[] aquas = parseJson(aquaJson, Aqua[].class);
+
+        Arrays.stream(aquas).forEach(System.out::println);
     }
 
-    private static VacancyHolder parseJson(URL url) throws IOException {
-        return new ObjectMapper().readValue(url, VacancyHolder.class);
-    }
-
-    public static Vacancy parseJson(String json) throws Exception {
-        return new ObjectMapper().readValue(json, Vacancy.class);
+    public static <T> T parseJson(String json, Class<T> t) throws IOException {
+        return new ObjectMapper().readValue(json, t);
     }
 }

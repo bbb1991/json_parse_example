@@ -176,7 +176,7 @@ public class JsonParserTest {
 
     @Test
     public void test1() throws Exception {
-        Vacancy vacancy = JsonParser.parseJson(exampleJson);
+        Vacancy vacancy = JsonParser.parseJson(exampleJson, Vacancy.class);
         Assert.assertEquals(57898321, vacancy.getId());
     }
 
